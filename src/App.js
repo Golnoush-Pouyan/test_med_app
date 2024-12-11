@@ -1,24 +1,23 @@
-import logo from './logo.svg';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Navbar from './Components/Navbar/Navbar'; // Ensure this path is also correct
+import Landing_Page from './Components/Landing_Page/LandingPage'; // Correct import path
 import './App.css';
 
+// Main App component
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      {/* Navbar will be rendered on every page */}
+      <Navbar />
+
+      {/* Define Routes for different pages */}
+      <Routes>
+        {/* Route for the Landing Page */}
+        <Route path="/" element={<Landing_Page />} />
+        {/* Add more routes here if needed */}
+      </Routes>
+    </Router>
   );
 }
 
