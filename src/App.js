@@ -4,7 +4,9 @@ import Navbar from "./Components/Navbar/Navbar"; // Navbar component
 import LandingPage from "./Components/Landing_Page/LandingPage"; // Landing Page
 import Login from "./Components/Login/Login"; // Login component
 import SignUp from "./Components/Sign_Up/SignUp"; // Sign Up component
-import InstantConsultation from "./Components/InstantConsultation/InstantConsultation"; // Instant Consultation component
+import InstantConsultation from "./Components/InstantConsultationBooking/InstantConsultation"; // Instant Consultation component
+
+
 import "./App.css"; // Global styles
 
 // Main App component
