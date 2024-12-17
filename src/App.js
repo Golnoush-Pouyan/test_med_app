@@ -1,10 +1,10 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Navbar from "./Components/Navbar/Navbar"; // Ensure this path is correct
-import LandingPage from "./Components/Landing_Page/LandingPage"; // Correct import path with PascalCase
-import Login from "./Components/Login/Login"; // Import the Login component
-import SignUp from "./Components/Sign_Up/SignUp"; // Import the SignUp component
-import "./App.css";
+import Navbar from "./Components/Navbar/Navbar"; // Navbar component
+import LandingPage from "./Components/Landing_Page/LandingPage"; // Landing Page
+import Login from "./Components/Login/Login"; // Login component
+import SignUp from "./Components/Sign_Up/SignUp"; // Sign Up component
+import "./App.css"; // Global styles
 
 // Main App component
 function App() {
@@ -23,6 +23,9 @@ function App() {
 
         {/* Route for the Sign Up Page */}
         <Route path="/signup" element={<SignUp />} />
+
+        {/* 404 Not Found Route */}
+        <Route path="*" element={<h1>404 - Page Not Found</h1>} />
       </Routes>
     </Router>
   );

@@ -1,168 +1,152 @@
 import React, { useState } from "react";
-import "./SignUp.css";
+import "./SignUp.css"; // CSS file for styling
+import { Link, useNavigate } from "react-router-dom";
+import { API_URL } from "../../config"; // Ensure the config file has API_URL defined
 
-const SignUp = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    phone: "",
-    email: "",
-    password: "",
-  });
+const Sign_Up = () => {
+  // State to manage form fields and errors
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
+  const [showerr, setShowerr] = useState(""); // Error message display
+  const navigate = useNavigate();
 
-  const [errors, setErrors] = useState({
-    name: "",
-    phone: "",
-    email: "",
-    password: "",
-  });
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const validateForm = () => {
-    let formErrors = {};
-    let valid = true;
-
-    // Name validation
-    if (!formData.name) {
-      formErrors.name = "Name is required";
-      valid = false;
-    }
-
-    // Phone validation (must be 10 digits)
-    const phoneRegex = /^[0-9]{10}$/;
-    if (!formData.phone) {
-      formErrors.phone = "Phone number is required";
-      valid = false;
-    } else if (!phoneRegex.test(formData.phone)) {
-      formErrors.phone = "Phone number must be 10 digits";
-      valid = false;
-    }
-
-    // Email validation (basic format check)
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!formData.email) {
-      formErrors.email = "Email is required";
-      valid = false;
-    } else if (!emailRegex.test(formData.email)) {
-      formErrors.email = "Enter a valid email";
-      valid = false;
-    }
-
-    // Password validation
-    if (!formData.password) {
-      formErrors.password = "Password is required";
-      valid = false;
-    }
-
-    setErrors(formErrors);
-    return valid;
-  };
-
-  const handleSubmit = (e) => {
+  // Form submission handler
+  const register = async (e) => {
     e.preventDefault();
-    if (validateForm()) {
-      console.log("Form Submitted Successfully!");
-      // Handle form submission (e.g., send data to API)
-    } else {
-      console.log("Form has errors!");
+    setShowerr(""); // Reset error message
+
+    try {
+      // API call to register the user
+      const response = await fetch(`${API_URL}/api/auth/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: name,
+          email: email,
+          password: password,
+          phone: phone,
+        }),
+      });
+
+      const json = await response.json();
+
+      // Check for success response
+      if (json.authtoken) {
+        // Store data in session storage
+        sessionStorage.setItem("auth-token", json.authtoken);
+        sessionStorage.setItem("name", name);
+        sessionStorage.setItem("phone", phone);
+        sessionStorage.setItem("email", email);
+
+        // Navigate to home and reload
+        navigate("/");
+        window.location.reload();
+      } else {
+        // Display errors
+        if (json.errors) {
+          for (const error of json.errors) {
+            setShowerr(error.msg);
+          }
+        } else {
+          setShowerr(json.error || "Something went wrong");
+        }
+      }
+    } catch (err) {
+      console.error("Error during registration:", err);
+      setShowerr("Failed to connect to the server.");
     }
   };
 
+  // Render the Sign Up form
   return (
     <div className="container" style={{ marginTop: "5%" }}>
       <div className="signup-grid">
         <div className="signup-text">
           <h1>Sign Up</h1>
-        </div>
-        <div className="signup-text1" style={{ textAlign: "left" }}>
-          Already a member?{" "}
-          <span>
-            <a href="../Login/Login.html" style={{ color: "#2190FF" }}>
+          <p>
+            Already a member?{" "}
+            <Link to="/login" style={{ color: "#2190FF" }}>
               Login
-            </a>
-          </span>
+            </Link>
+          </p>
         </div>
+
         <div className="signup-form">
-          <form onSubmit={handleSubmit}>
-            {/* Name */}
+          <form method="POST" onSubmit={register}>
+            {/* Name Field */}
             <div className="form-group">
               <label htmlFor="name">Name</label>
               <input
                 type="text"
-                name="name"
-                id="name"
-                value={formData.name}
-                onChange={handleChange}
-                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 className="form-control"
                 placeholder="Enter your name"
-              />
-              {errors.name && <div className="error">{errors.name}</div>}
-            </div>
-
-            {/* Phone */}
-            <div className="form-group">
-              <label htmlFor="phone">Phone</label>
-              <input
-                type="tel"
-                name="phone"
-                id="phone"
-                value={formData.phone}
-                onChange={handleChange}
                 required
-                className="form-control"
-                placeholder="Enter your phone number"
               />
-              {errors.phone && <div className="error">{errors.phone}</div>}
             </div>
 
-            {/* Email */}
+            {/* Email Field */}
             <div className="form-group">
               <label htmlFor="email">Email</label>
               <input
                 type="email"
-                name="email"
-                id="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="form-control"
                 placeholder="Enter your email"
+                required
               />
-              {errors.email && <div className="error">{errors.email}</div>}
             </div>
 
-            {/* Password */}
+            {/* Phone Field */}
+            <div className="form-group">
+              <label htmlFor="phone">Phone</label>
+              <input
+                type="tel"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                className="form-control"
+                placeholder="Enter your phone number"
+                required
+              />
+            </div>
+
+            {/* Password Field */}
             <div className="form-group">
               <label htmlFor="password">Password</label>
               <input
                 type="password"
-                name="password"
-                id="password"
-                value={formData.password}
-                onChange={handleChange}
-                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 className="form-control"
                 placeholder="Enter your password"
+                required
               />
-              {errors.password && (
-                <div className="error">{errors.password}</div>
-              )}
             </div>
 
+            {/* Error Message */}
+            {showerr && <div style={{ color: "red" }}>{showerr}</div>}
+
+            {/* Submit and Reset Buttons */}
             <div className="btn-group">
-              <button
-                type="submit"
-                className="btn btn-primary mb-2 mr-1 waves-effect waves-light"
-              >
+              <button type="submit" className="btn btn-primary">
                 Submit
               </button>
               <button
                 type="reset"
-                className="btn btn-danger mb-2 waves-effect waves-light"
+                className="btn btn-danger"
+                onClick={() => {
+                  setName("");
+                  setEmail("");
+                  setPhone("");
+                  setPassword("");
+                  setShowerr("");
+                }}
               >
                 Reset
               </button>
@@ -174,4 +158,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default Sign_Up;
